@@ -8,10 +8,10 @@
         >
           <v-flex mb-4>
             <h1 class="display-2 font-weight-bold mb-3">
-              Crowdfunding
+              Popup Projects
             </h1>
             <p class="subheading font-weight-regular">
-              Utilizing Ethereum for Decentralized Crowdfunding
+              Making a Better World with Ethereum-based Popup Projects
             </p>
           </v-flex>
         </v-layout>
