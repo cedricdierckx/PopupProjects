@@ -4,8 +4,54 @@ pragma solidity 0.5.4;
 import 'https://github.com/OpenZeppelin/openzeppelin-solidity/contracts/math/SafeMath.sol';
 
 
+contract PopupProjects {
+    using SafeMath for uint256;
+
+    // List of existing projects
+    Crowdfunding[] private crowdfundings;
+
+    // Event that will be emitted whenever a new project is started
+    event CrowdfundingStarted(
+        address crowdfundingAddress,
+        address crowdfundingStarter,
+        string crowdfundingTitle,
+        string crowdfundingDesc
+    );
+
+    /** @dev Function to start a new crowdfunding.
+      * @param crowdfundingTitle Title of the project to be created
+      * @param crowdfundingDescription Brief description about the project
+      */
+    function startCrowdfunding(
+        string calldata crowdfundingTitle,
+        string calldata crowdfundingDescription
+    ) external {
+        Crowdfunding newCrowdfunding = new Crowdfunding(msg.sender, crowdfundingTitle, crowdfundingDescription);
+        crowdfundings.push(newCrowdfunding);
+        emit CrowdfundingStarted(
+            address(newCrowdfunding),
+            msg.sender,
+            crowdfundingTitle,
+            crowdfundingDescription
+        );
+    }                                                                                                                                   
+
+    /** @dev Function to get all projects' contract addresses.
+      * @return A list of all projects' contract addreses
+      */
+    function returnAllCrowdfundings() external view returns(Crowdfunding[] memory){
+        return crowdfundings;
+    }
+}
+
+
 contract Crowdfunding {
     using SafeMath for uint256;
+
+    // State variables
+    address payable public CFcreator;
+    string public CFtitle;
+    string public CFdescription;
 
     // List of existing projects
     Project[] private projects;
@@ -20,28 +66,39 @@ contract Crowdfunding {
         uint256 goalAmount
     );
 
+constructor
+    (
+        address payable crowdfundingStarter,
+        string memory crowdfundingTitle,
+        string memory crowdfundingDesc
+    ) public {
+        CFcreator = crowdfundingStarter;
+        CFtitle = crowdfundingTitle;
+        CFdescription = crowdfundingDesc;
+    }
+
     /** @dev Function to start a new project.
-      * @param title Title of the project to be created
-      * @param description Brief description about the project
-      * @param durationInDays Project deadline in days
-      * @param amountToRaise Project goal in wei
+      * @param CCtitle Title of the project to be created
+      * @param CCdescription Brief description about the project
+      * @param CCdurationInDays Project deadline in days
+      * @param CCamountToRaise Project goal in wei
       */
     function startProject(
-        string calldata title,
-        string calldata description,
-        uint durationInDays,
-        uint amountToRaise
+        string calldata CCtitle,
+        string calldata CCdescription,
+        uint CCdurationInDays,
+        uint CCamountToRaise
     ) external {
-        uint raiseUntil = now.add(durationInDays.mul(1 days));
-        Project newProject = new Project(msg.sender, title, description, raiseUntil, amountToRaise);
+        uint CCraiseUntil = now.add(CCdurationInDays.mul(1 days));
+        Project newProject = new Project(msg.sender, CCtitle, CCdescription, CCraiseUntil, CCamountToRaise);
         projects.push(newProject);
         emit ProjectStarted(
             address(newProject),
             msg.sender,
-            title,
-            description,
-            raiseUntil,
-            amountToRaise
+            CCtitle,
+            CCdescription,
+            CCraiseUntil,
+            CCamountToRaise
         );
     }                                                                                                                                   
 
