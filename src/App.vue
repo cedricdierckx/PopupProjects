@@ -11,17 +11,17 @@
               Popup Projects
             </h1>
             <p class="subheading font-weight-regular">
-              Making a Better World with Ethereum-based Popup Projects
+              Utilizing Ethereum for Decentralized Popup Projects
             </p>
           </v-flex>
         </v-layout>
 
         <v-layout row justify-center>
           <v-dialog v-model="startProjectDialog" max-width="600px" persistent>
-            <v-btn slot="activator" color="primary" dark>Start a Project</v-btn>
+            <v-btn slot="activator" color="primary" dark>Start a Popup Project</v-btn>
             <v-card>
               <v-card-title>
-                <span class="headline font-weight-bold mt-2 ml-4">Bring your project to life</span>
+                <span class="headline font-weight-bold mt-2 ml-4">Bring your Popup Project to life</span>
               </v-card-title>
               <v-card-text class="pt-0">
                 <v-container class="pt-0" grid-list-md>
@@ -84,7 +84,7 @@
         grid-list-lg
       >
         <h1 class="display-1 font-weight-bold mb-3">
-          Projects
+          Popup Projects
         </h1>
         <v-layout row wrap>
           <v-flex v-for="(project, index) in projectData" :key="index" xs12>
@@ -193,7 +193,8 @@
 </template>
 
 <script>
-// We import our the scripts for the smart contract instantiation, and web3
+// We import our scripts for the smart contract instantiation, and web3
+import crowdfundPopupProjects from '../contracts/crowdfundPopupProjects';
 import crowdfundInstance from '../contracts/crowdfundInstance';
 import crowdfundProject from '../contracts/crowdfundProjectInstance';
 import web3 from '../contracts/web3';
@@ -205,9 +206,9 @@ export default {
       startProjectDialog: false,
       account: null,
       stateMap: [
-        { color: 'primary', text: 'Ongoing' },
-        { color: 'warning', text: 'Expired' },
-        { color: 'success', text: 'Completed' },
+        { color: 'primary', text: 'Ongoing...' },
+        { color: 'warning', text: 'Expired...' },
+        { color: 'success', text: 'Completed...' },
       ],
       projectData: [],
       newProject: { isLoading: false },
@@ -217,15 +218,58 @@ export default {
     // this code snippet takes the account (wallet) that is currently active
     web3.eth.getAccounts().then((accounts) => {
       [this.account] = accounts;
-      this.getProjects();
+      this.getCrowdfundings();
+      //this.getProjects();
     });
   },
   methods: {
-    getProjects() {
-      crowdfundInstance.methods.returnAllProjects().call().then((projects) => {
+    getCrowdfundings() {
+      // display Crowdfundings here
+      
+      crowdfundPopupProjects.methods.returnAllCrowdfundings().call().then((crowdfundings) => {
+        crowdfundings.forEach((crowdfundingAddress) => {
+          const crowdfundingInst = crowdfundInstance(crowdfundingAddress);
+          
+          //alert(crowdfundingAddress);
+          //alert(crowdfundingInst);
+
+
+          crowdfundingInst.methods.CFtitle().call().then((abcdef) => {
+            alert("CROWDFUNDING " + abcdef);
+          });
+
+          this.getProjects(crowdfundingAddress);
+
+
+
+        });
+      });
+      
+      
+      //var abcd = "ok";
+      //abcd = crowdfundProject(0);
+      //abcd = crowdfundPopupProjects.methods.returnAllCrowdfundings().call().then(alert("ok"));
+      //alert(JSON.stringify(crowdfundPopupProjects.methods.returnAllCrowdfundings()));
+      //alert(abcd);
+    },
+    getProjects(crowdfundingAddress) {
+        // display Projects here
+
+alert(crowdfundingAddress);
+
+//const address = crowdfundingAddress;
+const crowdfundingInst = crowdfundInstance(crowdfundingAddress);
+
+        crowdfundingInst.methods.returnAllProjects().call().then((projects) => {
+        //crowdfundInstance.methods.returnAllProjects().call().then((projects) => {
         projects.forEach((projectAddress) => {
           const projectInst = crowdfundProject(projectAddress);
-          projectInst.methods.getDetails().call().then((projectData) => {
+
+projectInst.methods.title().call().then((abcde) => {
+    alert("- PROJECT " + abcde);
+});
+
+            projectInst.methods.getDetails().call().then((projectData) => {
             const projectInfo = projectData;
             projectInfo.isLoading = false;
             projectInfo.contract = projectInst;
