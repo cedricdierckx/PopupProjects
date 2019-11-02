@@ -108,6 +108,22 @@ constructor
     function returnAllProjects() external view returns(Project[] memory){
         return projects;
     }
+
+
+    /** @dev Function to get specific information about the project.
+      * @return Returns all the project's details
+      */
+    function getDetails() public view returns 
+    (
+        address payable crowdfundingStarter,
+        string memory crowdfundingTitle,
+        string memory crowdfundingDesc
+    ) {
+        crowdfundingStarter = CFcreator;
+        crowdfundingTitle = CFtitle;
+        crowdfundingDesc = CFdescription;
+    }
+
 }
 
 
