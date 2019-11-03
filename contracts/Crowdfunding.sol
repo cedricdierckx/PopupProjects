@@ -52,6 +52,7 @@ contract Crowdfunding {
     address payable public CFcreator;
     string public CFtitle;
     string public CFdescription;
+    address payable public CFparentContractAddress;
 
     // List of existing projects
     Project[] private projects;
@@ -75,6 +76,7 @@ constructor
         CFcreator = crowdfundingStarter;
         CFtitle = crowdfundingTitle;
         CFdescription = crowdfundingDesc;
+        CFparentContractAddress = msg.sender;
     }
 
     /** @dev Function to start a new project.
@@ -117,11 +119,15 @@ constructor
     (
         address payable crowdfundingStarter,
         string memory crowdfundingTitle,
-        string memory crowdfundingDesc
+        string memory crowdfundingDesc,
+        address payable crowdfundingParentContractAddress,
+        address crowdfundingMyContractAddress
     ) {
         crowdfundingStarter = CFcreator;
         crowdfundingTitle = CFtitle;
         crowdfundingDesc = CFdescription;
+        crowdfundingParentContractAddress = CFparentContractAddress;
+        crowdfundingMyContractAddress = address(this);
     }
 
 }
@@ -147,6 +153,7 @@ contract Project {
     string public description;
     State public state = State.Fundraising; // initialize on create
     mapping (address => uint) public contributions;
+    address payable public parentContractAddress;
 
     // Event that will be emitted whenever funding will be received
     event FundingReceived(address contributor, uint amount, uint currentTotal);
@@ -179,6 +186,7 @@ contract Project {
         amountGoal = goalAmount;
         raiseBy = fundRaisingDeadline;
         currentBalance = 0;
+        parentContractAddress = msg.sender;
     }
 
     /** @dev Function to fund a certain project.
@@ -249,7 +257,9 @@ contract Project {
         uint256 deadline,
         State currentState,
         uint256 currentAmount,
-        uint256 goalAmount
+        uint256 goalAmount,
+        address payable projectParentContractAddress,
+        address projectMyContractAddress
     ) {
         projectStarter = creator;
         projectTitle = title;
@@ -258,5 +268,7 @@ contract Project {
         currentState = state;
         currentAmount = currentBalance;
         goalAmount = amountGoal;
+        projectParentContractAddress = parentContractAddress;
+        projectMyContractAddress = address(this);
     }
 }

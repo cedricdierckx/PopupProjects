@@ -141,12 +141,9 @@
 
 
 
-                    <h1 class="headline font-weight-bold">
-                      Crowdfunding Campaigns
-                    </h1>
                     <v-layout row wrap>
                       <v-flex v-for="(project, index) in projectData" :key="index" xs12>
-<v-flex v-if="project.projectStarter == crowdfunding.crowdfundingStarter">
+                        <v-flex v-if="project.projectParentContractAddress == crowdfunding.crowdfundingMyContractAddress">
                           <v-dialog
                             v-model="project.dialog"
                             width="800"
@@ -311,7 +308,7 @@
                             </v-btn>
                             <v-btn color="blue darken-1"
                               flat
-@click="startProject('0x974CB7738098dcb32194d48FcB3E12A838e3F19b')"
+@click="startProject(crowdfunding.crowdfundingMyContractAddress)"
                               :loading="newProject.isLoading">
                               Save
                             </v-btn>
